@@ -10,6 +10,7 @@ Route::post("/categories/check_title", [CategoryController::class, "check_title"
 Route::get("/categories/{id}/getName", [CategoryController::class, "getName"]);
 Route::get("/categories", [CategoryController::class, "index"]);
 Route::get("/categories/{slug}", [CategoryController::class, "show"]);
+Route::get("/categories/{slug}/{count}", [CategoryController::class, "showUpto"]);
 //Route::get("/categories/{slug}/show", function(){return "hello";});
 
 Route::get("/products", [\App\Http\Controllers\ProductController::class, "index"]);

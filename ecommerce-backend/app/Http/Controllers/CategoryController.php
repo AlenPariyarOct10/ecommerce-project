@@ -85,6 +85,7 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
+
     public function show(string $slug)
     {
         // Find the category by its slug
@@ -112,6 +113,35 @@ class CategoryController extends Controller
         return response()->json($products);
     }
 
+    /*
+     * Show upto count numbers of records
+     * */
+    public function showUpto(string $slug, int $count)
+    {
+        // Find the category by its slug
+        $category = Category::where('slug', $slug)->first();
+
+        // Check if the category exists
+        if (!$category) {
+            return response()->json(['error' => 'Category not found'], 404);
+        }
+
+        // Get all products that belong to this category and fetch only one image for each product
+        $products = Product::with(['images' => function($query) {
+            $query->orderBy('id')->limit(1);  // Get only the first image
+        }])
+            ->where('category_id', $category->id)->limit($count)->get();
+
+
+        // Append full image path to each product
+        $products->each(function ($product) {
+            $product->images->each(function ($image) {
+                $image->url = url('/assets/uploads/products/' . $image->url);
+            });
+        });
+
+        return response()->json($products);
+    }
 
     /**
      * Show the form for editing the specified resource.

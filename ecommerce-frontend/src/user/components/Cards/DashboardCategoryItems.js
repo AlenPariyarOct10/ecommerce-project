@@ -11,7 +11,7 @@ const [category, setCategory] = useState([]);
   useEffect(() => {
     
     https
-      .get(`/categories/${title}`)
+      .get(`/categories/${title}/5`)
       .then((response) => {
         console.log("response", response);
         setCategory(response.data);

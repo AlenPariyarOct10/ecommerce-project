@@ -80,20 +80,22 @@ class ProductController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $slug)
-    {
-        return response()->json(Product::all());
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
     {
         //
     }
+
+    /**
+     * Display the specified resource.
+     */
+
+    public function show(string $slug)
+    {
+        return response()->json(Product::all());
+    }
+
 
     /**
      * Update the specified resource in storage.
