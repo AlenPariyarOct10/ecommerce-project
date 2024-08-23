@@ -93,7 +93,16 @@ class ProductController extends Controller
 
     public function show(string $slug)
     {
-        return response()->json(Product::all());
+        $product = Product::with('images')->where('slug', $slug)->first();
+        $product->category_name = $product->category ? $product->category->name : 'No Category';
+
+
+            $product->images->each(function ($image) {
+                $image->url = url('/assets/uploads/products/' . $image->url);
+            });
+
+
+        return $product;
     }
 
 

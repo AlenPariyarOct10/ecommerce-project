@@ -1,33 +1,91 @@
 import { Spin } from "antd";
 import ProductSlider from "../components/ProductSlider";
 import ProductsCardPrimary from "../components/Cards/ProductsCardPrimary";
+import https from "../../server/https";
+import { NavLink, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import Slider from "react-slick";
 
 export default function SingleProduct() {
+    let [quantity, setQuantity] = useState(1);
+    const [product, setProduct] = useState([]);
+    const { slug } = useParams();
+
+    let handleQuantity = (operation) =>{
+        if(operation===1)
+        {
+            setQuantity(prevQuantity => prevQuantity+1);
+        }else{
+            if(quantity>0)
+            {
+                setQuantity(prevQuantity => prevQuantity-1);
+            }
+        }
+    }
+
+    // Slider Setting
+    var settings = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+      };
+
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                const response = await https.get(`products/${slug}`);
+                setProduct(response.data);
+            } catch (ex) {
+                console.error("Error fetching product:", ex);
+            }
+        };
+
+        fetchProduct();
+    }, [slug]); 
+
+    console.log("slug ", slug);
     document.title = "Home 🏠";
     return (
         <section className="relative ">
-            <div className="w-full h-3/4 mx-auto px-4 sm:px-6 lg:px-0">
+            <div className="w-full h-1/4 mx-auto px-1 sm:px-2 lg:px-0">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mx-auto max-md:px-2 ">
                     <div className="img">
                         <div className="img-box h-full max-lg:mx-auto ">
-                            <img
-                                src="https://pagedone.io/asset/uploads/1700471600.png"
-                                alt="Yellow Tropical Printed Shirt image"
-                                className="max-lg:mx-auto lg:ml-auto h-full"
-                            />
+                            {(product.images?.length>1)?<Slider {...settings}>
+                            {product.images?.map((image) => (
+                                <img
+                                    key={image.id}
+                                    src={`${image.url}/${image.image_path}`} // Concatenating the base URL with the image path
+                                    alt={product.name} // Using the product name as alt text
+                                    className="object-cover w-full h-full" // Adjust styles as needed
+                                />
+
+                            ))}
+                            </Slider>: product.images?.map((image) => (
+                                <img
+                                    key={image.id}
+                                    src={`${image.url}/${image.image_path}`} // Concatenating the base URL with the image path
+                                    alt={product.name} // Using the product name as alt text
+                                    className="object-cover w-full h-full" // Adjust styles as needed
+                                />
+
+                            ))}
+                            
                         </div>
                     </div>
                     <div className="data w-full lg:pr-8 pr-0 xl:justify-start justify-center flex items-center max-lg:pb-10 xl:my-2 lg:my-5 my-0">
                         <div className="data w-full max-w-xl">
-                            <p className="text-lg font-medium leading-8 text-indigo-600 mb-4">
-                                Clothing&nbsp; /&nbsp; Menswear
-                            </p>
+                            <NavLink to={"/categories/" + product.category_name} className="text-lg font-medium leading-8 text-indigo-600 mb-4">
+                                {product.category_name}
+                            </NavLink>
                             <h2 className="font-manrope font-bold text-3xl leading-10 text-gray-900 mb-2 capitalize">
-                                Basic Yellow Tropical Printed Shirt
+                                {product.name}
                             </h2>
                             <div className="flex flex-col sm:flex-row sm:items-center mb-6">
                                 <h6 className="font-manrope font-semibold text-2xl leading-9 text-gray-900 pr-5 sm:border-r border-gray-200 mr-5">
-                                    $220
+                                    Rs. {product.price}
                                 </h6>
                                 <div className="flex items-center gap-2">
                                     <div className="flex items-center gap-1">
@@ -133,10 +191,7 @@ export default function SingleProduct() {
                                 </div>
                             </div>
                             <p className="text-gray-500 text-base font-normal mb-5">
-                                Introducing our vibrant Basic Yellow Tropical Printed Shirt - a
-                                celebration of style and sunshine! Embrace the essence of summer
-                                wherever you go with this eye-catching piece that effortlessly
-                                blends comfort and tropical flair.{" "}
+                                {product.description}{" "}
                                 <a href="#" className="text-indigo-600">
                                     More....
                                 </a>
@@ -247,7 +302,7 @@ export default function SingleProduct() {
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 py-8">
                                 <div className="flex sm:items-center sm:justify-center w-full">
-                                    <button className="group py-4 px-6 border border-gray-400 rounded-l-full bg-white transition-all duration-300 hover:bg-gray-50 hover:shadow-sm hover:shadow-gray-300">
+                                    <button onClick={()=>handleQuantity(-1)} className="group py-4 px-6 border border-gray-400 rounded-l-full bg-white transition-all duration-300 hover:bg-gray-50 hover:shadow-sm hover:shadow-gray-300">
                                         <svg
                                             className="stroke-gray-900 group-hover:stroke-black"
                                             width={22}
@@ -281,9 +336,9 @@ export default function SingleProduct() {
                                     <input
                                         type="text"
                                         className="font-semibold text-gray-900 cursor-pointer text-lg py-[13px] px-6 w-full sm:max-w-[118px] outline-0 border-y border-gray-400 bg-transparent placeholder:text-gray-900 text-center hover:bg-gray-50"
-                                        placeholder={1}
+                                        placeholder={quantity}
                                     />
-                                    <button className="group py-4 px-6 border border-gray-400 rounded-r-full bg-white transition-all duration-300 hover:bg-gray-50 hover:shadow-sm hover:shadow-gray-300">
+                                    <button onClick={()=>handleQuantity(1)} className="group py-4 px-6 border border-gray-400 rounded-r-full bg-white transition-all duration-300 hover:bg-gray-50 hover:shadow-sm hover:shadow-gray-300">
                                         <svg
                                             className="stroke-gray-900 group-hover:stroke-black"
                                             width={22}

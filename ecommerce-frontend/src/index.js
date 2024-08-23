@@ -11,6 +11,9 @@ import ListProducts from "./admin/pages/products/ListProducts";
 
 import CategoriesArchive from "./user/pages/CategoriesArchive";
 import DashboardCategoryItems from "./user/components/Cards/DashboardCategoryItems";
+import store from "./app/store";
+import { Provider } from "react-redux";
+
 
 
 
@@ -40,164 +43,178 @@ function Page({ title, children }) {
 export default function App() {
   return (
     <BrowserRouter>
-    <Suspense fallback={
-                <div className="flex justify-center items-center h-screen">
-                  <Spin size="large" />
-                </div>
-              }>
-      <Routes>
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<Dashboard />}></Route>
-          <Route
-            path="categories"
-            element={
-              <Suspense fallback={
-                <div className="flex justify-center items-center h-screen">
-                  <Spin size="large" />
-                </div>
-              }><ListCategories /></Suspense>
-              
-            }
-          />
-          <Route
-            path="categories/create"
-            element={
-              <Suspense fallback={
-                <div className="flex justify-center items-center h-screen">
-                  <Spin size="large" />
-                </div>
-              }><CreateCategories /></Suspense>
-              
-            }
-          />
-          
-          <Route
-            path="products"
-            element={
-              <Suspense fallback={
-                <div className="flex justify-center items-center h-screen">
-                  <Spin size="large" />
-                </div>
-              }><ListProducts /></Suspense>
-              
-            }
-          />
-          <Route
-            path="products/create"
-            element={
-              <Suspense fallback={
-                <div className="flex justify-center items-center h-screen">
-                  <Spin size="large" />
-                </div>
-              }><CreateProducts /></Suspense>
-              
-            }
-          />
-          <Route
-            path="*"
-            element={
-              <NoPage />
-            }
-          />
-          
-        </Route>
+      <Provider store={store}>
+        <Suspense fallback={
+          <div className="flex justify-center items-center h-screen">
+            <Spin size="large" />
+          </div>
+        }>
+          <Routes>
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<Dashboard />}></Route>
+              <Route
+                path="categories"
+                element={
+                  <Suspense fallback={
+                    <div className="flex justify-center items-center h-screen">
+                      <Spin size="large" />
+                    </div>
+                  }><ListCategories /></Suspense>
 
-        <Route path="/" element={<HomeLayout />}>
-          <Route
-            index
-            element={
-              <Suspense fallback={
-                <div className="flex justify-center items-center h-screen">
-                  <Spin size="large" />
-                </div>
-              }>
-                <Home />
-              </Suspense>
-            }
-          />
-          <Route
-            path="categories"
-            element={
-              <Suspense fallback={
-                <div className="flex justify-center items-center h-screen">
-                  <Spin size="large" />
-                </div>
-              }>
-                <Categories />
-              </Suspense>
-            }
-          />
-        
-          <Route
-            path="categories/:slug"
-            element={
-              <Suspense fallback={
-                <div className="flex justify-center items-center h-screen">
-                  <Spin size="large" />
-                </div>
-              }><CategoriesArchive/></Suspense>
-              
-            }
-          />
-          <Route
-            path="hotproducts"
-            element={
-              <Suspense fallback={
-                <div className="flex justify-center items-center h-screen">
-                  <Spin size="large" />
-                </div>
-              }>
-                <Hotproducts />
-              </Suspense>
-            }
-          />
-          <Route
-            path="product"
-            element={
-              <Suspense fallback={
-                <div className="flex justify-center items-center h-screen">
-                  <Spin size="large" />
-                </div>
-              }>
-                <SingleProduct />
-              </Suspense>
-            }
-          />
-          <Route
-            path="cart"
-            element={
-              <Suspense fallback={
-                <div className="flex justify-center items-center h-screen">
-                  <Spin size="large" />
-                </div>
-              }>
-                <Cart />
-              </Suspense>
-            }
-          />
-          <Route
-            path="*"
-            element={
-              <NoPage />
-            }
-          />
-        </Route>
-        <Route path="/auth" >
-          <Route
-            path="login"
-            element={
-              <UserLogin />
-            }
-          />
-          <Route
-            path="*"
-            element={
-              <NoPage />
-            }
-          />
-        </Route>
-      </Routes>
-      </Suspense>
+                }
+              />
+              <Route
+                path="categories/create"
+                element={
+                  <Suspense fallback={
+                    <div className="flex justify-center items-center h-screen">
+                      <Spin size="large" />
+                    </div>
+                  }><CreateCategories /></Suspense>
+
+                }
+              />
+
+              <Route
+                path="products"
+                element={
+                  <Suspense fallback={
+                    <div className="flex justify-center items-center h-screen">
+                      <Spin size="large" />
+                    </div>
+                  }><ListProducts /></Suspense>
+
+                }
+              />
+              <Route
+                path="products/create"
+                element={
+                  <Suspense fallback={
+                    <div className="flex justify-center items-center h-screen">
+                      <Spin size="large" />
+                    </div>
+                  }><CreateProducts /></Suspense>
+
+                }
+              />
+              <Route
+                path="*"
+                element={
+                  <NoPage />
+                }
+              />
+
+            </Route>
+
+            <Route path="/" element={<HomeLayout />}>
+              <Route
+                index
+                element={
+                  <Suspense fallback={
+                    <div className="flex justify-center items-center h-screen">
+                      <Spin size="large" />
+                    </div>
+                  }>
+                    <Home />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="categories"
+                element={
+                  <Suspense fallback={
+                    <div className="flex justify-center items-center h-screen">
+                      <Spin size="large" />
+                    </div>
+                  }>
+                    <Categories />
+                  </Suspense>
+                }
+              />
+
+              <Route
+                path="categories/:slug"
+                element={
+                  <Suspense fallback={
+                    <div className="flex justify-center items-center h-screen">
+                      <Spin size="large" />
+                    </div>
+                  }><CategoriesArchive /></Suspense>
+
+                }
+              />
+              <Route
+                path="hotproducts"
+                element={
+                  <Suspense fallback={
+                    <div className="flex justify-center items-center h-screen">
+                      <Spin size="large" />
+                    </div>
+                  }>
+                    <Hotproducts />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="product"
+                element={
+                  <Suspense fallback={
+                    <div className="flex justify-center items-center h-screen">
+                      <Spin size="large" />
+                    </div>
+                  }>
+                    <SingleProduct />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="product/:slug"
+                element={
+                  <Suspense fallback={
+                    <div className="flex justify-center items-center h-screen">
+                      <Spin size="large" />
+                    </div>
+                  }>
+                    <SingleProduct />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="cart"
+                element={
+                  <Suspense fallback={
+                    <div className="flex justify-center items-center h-screen">
+                      <Spin size="large" />
+                    </div>
+                  }>
+                    <Cart />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="*"
+                element={
+                  <NoPage />
+                }
+              />
+            </Route>
+            <Route path="/auth" >
+              <Route
+                path="login"
+                element={
+                  <UserLogin />
+                }
+              />
+              <Route
+                path="*"
+                element={
+                  <NoPage />
+                }
+              />
+            </Route>
+          </Routes>
+        </Suspense>
+      </Provider>
     </BrowserRouter>
   );
 }

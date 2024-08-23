@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import https from "../../server/https";
 import { useParams } from "react-router-dom";
 import ProductsCardPrimary from "../components/Cards/ProductsCardPrimary";
+import { Spin } from "antd";
 
 const CategoriesArchive = () => {
   const [category, setCategory] = useState(null);
@@ -26,7 +27,9 @@ const CategoriesArchive = () => {
   }, [slug]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="h-full w-full flex flex-row align-middle justify-center">
+        <Spin size="large" />
+    </div>;
   }
 
   if (error) {
@@ -34,7 +37,7 @@ const CategoriesArchive = () => {
   }
 
   return (
-    <ProductsCardPrimary title={slug.toUpperCase()+" PRODUCTS"} list={category}/>
+    (category.length>0)?<ProductsCardPrimary title={slug.toUpperCase()+" PRODUCTS"} list={category}/>:<ProductsCardPrimary title={slug.toUpperCase()+" Not Available"} list={category}/>
   );
 };
 

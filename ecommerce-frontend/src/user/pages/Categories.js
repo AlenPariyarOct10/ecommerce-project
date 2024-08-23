@@ -22,7 +22,7 @@ export default function Categories() {
             setItems(response.data);
         } catch (error) {
             console.error("Failed to fetch categories:", error);
-            setItems([]); // Set to an empty array if there's an error
+            setItems([]); 
         }
     };
 
