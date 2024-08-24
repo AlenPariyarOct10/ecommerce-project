@@ -5,23 +5,38 @@ import https from "../../server/https";
 import { NavLink, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Slider from "react-slick";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "../../app/slices/cartSlice";
 
 export default function SingleProduct() {
     let [quantity, setQuantity] = useState(1);
-    const [product, setProduct] = useState([]);
+    const [product, setProduct] = useState({
+        quantity: 1
+    });
     const { slug } = useParams();
 
-    let handleQuantity = (operation) =>{
-        if(operation===1)
-        {
-            setQuantity(prevQuantity => prevQuantity+1);
-        }else{
-            if(quantity>0)
-            {
-                setQuantity(prevQuantity => prevQuantity-1);
-            }
-        }
+    const cart = useSelector(cart => cart);
+
+
+    const addToCartHandler = () => {
+
+        dispatch(addToCart(product));
     }
+
+    let dispatch = useDispatch();
+
+    let handleQuantity = (operation) => {
+        setQuantity((prevQuantity) => {
+            const newQuantity = operation === 1 ? prevQuantity + 1 : Math.max(prevQuantity - 1, 1);
+
+            setProduct((prevProduct) => ({
+                ...prevProduct,
+                quantity: newQuantity
+            }));
+
+            return newQuantity;
+        });
+    };
 
     // Slider Setting
     var settings = {
@@ -30,12 +45,13 @@ export default function SingleProduct() {
         speed: 500,
         slidesToShow: 1,
         slidesToScroll: 1,
-      };
+    };
 
     useEffect(() => {
         const fetchProduct = async () => {
             try {
                 const response = await https.get(`products/${slug}`);
+                response.data.quantity = 1;
                 setProduct(response.data);
             } catch (ex) {
                 console.error("Error fetching product:", ex);
@@ -43,7 +59,7 @@ export default function SingleProduct() {
         };
 
         fetchProduct();
-    }, [slug]); 
+    }, [slug]);
 
     console.log("slug ", slug);
     document.title = "Home 🏠";
@@ -53,8 +69,17 @@ export default function SingleProduct() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mx-auto max-md:px-2 ">
                     <div className="img">
                         <div className="img-box h-full max-lg:mx-auto ">
-                            {(product.images?.length>1)?<Slider {...settings}>
-                            {product.images?.map((image) => (
+                            {(product.images?.length > 1) ? <Slider {...settings}>
+                                {product.images?.map((image) => (
+                                    <img
+                                        key={image.id}
+                                        src={`${image.url}/${image.image_path}`} // Concatenating the base URL with the image path
+                                        alt={product.name} // Using the product name as alt text
+                                        className="object-cover w-full h-full" // Adjust styles as needed
+                                    />
+
+                                ))}
+                            </Slider> : product.images?.map((image) => (
                                 <img
                                     key={image.id}
                                     src={`${image.url}/${image.image_path}`} // Concatenating the base URL with the image path
@@ -63,16 +88,7 @@ export default function SingleProduct() {
                                 />
 
                             ))}
-                            </Slider>: product.images?.map((image) => (
-                                <img
-                                    key={image.id}
-                                    src={`${image.url}/${image.image_path}`} // Concatenating the base URL with the image path
-                                    alt={product.name} // Using the product name as alt text
-                                    className="object-cover w-full h-full" // Adjust styles as needed
-                                />
 
-                            ))}
-                            
                         </div>
                     </div>
                     <div className="data w-full lg:pr-8 pr-0 xl:justify-start justify-center flex items-center max-lg:pb-10 xl:my-2 lg:my-5 my-0">
@@ -85,7 +101,14 @@ export default function SingleProduct() {
                             </h2>
                             <div className="flex flex-col sm:flex-row sm:items-center mb-6">
                                 <h6 className="font-manrope font-semibold text-2xl leading-9 text-gray-900 pr-5 sm:border-r border-gray-200 mr-5">
-                                    Rs. {product.price}
+                                    {(product.discount > 0) ?<> <span className="line-through text-gray-600">
+                                        Rs. {product.price}
+                                    </span> <span className="text-3xl">
+                                    Rs. {product.price - (product.price*product.discount)/100}
+                                        </span> </>: <span >
+                                        Rs. {product.price}
+                                    </span>}
+
                                 </h6>
                                 <div className="flex items-center gap-2">
                                     <div className="flex items-center gap-1">
@@ -302,7 +325,7 @@ export default function SingleProduct() {
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 py-8">
                                 <div className="flex sm:items-center sm:justify-center w-full">
-                                    <button onClick={()=>handleQuantity(-1)} className="group py-4 px-6 border border-gray-400 rounded-l-full bg-white transition-all duration-300 hover:bg-gray-50 hover:shadow-sm hover:shadow-gray-300">
+                                    <button onClick={() => handleQuantity(-1)} className="group py-4 px-6 border border-gray-400 rounded-l-full bg-white transition-all duration-300 hover:bg-gray-50 hover:shadow-sm hover:shadow-gray-300">
                                         <svg
                                             className="stroke-gray-900 group-hover:stroke-black"
                                             width={22}
@@ -338,7 +361,7 @@ export default function SingleProduct() {
                                         className="font-semibold text-gray-900 cursor-pointer text-lg py-[13px] px-6 w-full sm:max-w-[118px] outline-0 border-y border-gray-400 bg-transparent placeholder:text-gray-900 text-center hover:bg-gray-50"
                                         placeholder={quantity}
                                     />
-                                    <button onClick={()=>handleQuantity(1)} className="group py-4 px-6 border border-gray-400 rounded-r-full bg-white transition-all duration-300 hover:bg-gray-50 hover:shadow-sm hover:shadow-gray-300">
+                                    <button onClick={() => handleQuantity(1)} className="group py-4 px-6 border border-gray-400 rounded-r-full bg-white transition-all duration-300 hover:bg-gray-50 hover:shadow-sm hover:shadow-gray-300">
                                         <svg
                                             className="stroke-gray-900 group-hover:stroke-black"
                                             width={22}
@@ -370,7 +393,7 @@ export default function SingleProduct() {
                                         </svg>
                                     </button>
                                 </div>
-                                <button className="group py-4 px-5 rounded-full bg-indigo-50 text-indigo-600 font-semibold text-lg w-full flex items-center justify-center gap-2 transition-all duration-500 hover:bg-indigo-100">
+                                <button onClick={addToCartHandler} className="group py-4 px-5 rounded-full bg-indigo-50 text-indigo-600 font-semibold text-lg w-full flex items-center justify-center gap-2 transition-all duration-500 hover:bg-indigo-100">
                                     <svg
                                         className="stroke-indigo-600 "
                                         width={22}

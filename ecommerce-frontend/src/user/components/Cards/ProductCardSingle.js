@@ -7,6 +7,7 @@ export default function ProductCardSingle({ item }) {
     const dispatch = useDispatch();
 
     const addToCartHandler = () => {
+        console.log("clicked");
         dispatch(addToCart(item));
         
     };

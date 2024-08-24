@@ -14,7 +14,7 @@ const cartSlice = createSlice({
             const newItem = action.payload;
             const existingItem = state.cartItems.find(item => item.id === newItem.id);
             state.cartItems.push(newItem);
-            state.totalPrice += parseFloat(newItem.price);
+            state.totalPrice += parseFloat(newItem.price - (newItem.price*newItem.discount)/100)*newItem.quantity;
         }
     }
 });
